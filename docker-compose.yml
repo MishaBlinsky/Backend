@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=abas
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=abas
+      - POSTGRES_HOST_AUTH_METHOD=md5
+      - POSTGRES_INITDB_ARGS=--auth=md5
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+      - ./initdb.d:/docker-entrypoint-initdb.d
+  
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    environment:
+      - DB_HOST=abas
+      - DB_PORT=5432
+      - DB_USER=abas
+      - DB_PASSWORD=123
+      - ADMIN_USERS=abas,admin
+    ports:
+      - "15432:5432"
+  
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: rabbitmq
+    ports:
+        - "5672:5672"
+        - "15672:15672"
+    volumes:
+        - rabbitmq_data:/var/lib/rabbitmq
+
+volumes:
+    pgdata:
+    rabbitmq_data:
